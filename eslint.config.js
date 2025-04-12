@@ -4,6 +4,7 @@ import globals from "globals";
 import tseslint from "typescript-eslint";
 import pluginReact from "eslint-plugin-react";
 import eslintConfigPrettier from "eslint-config-prettier/flat";
+import pluginQuery from "@tanstack/eslint-plugin-query";
 
 export default defineConfig([
   globalIgnores([".vinxi", ".output"]),
@@ -18,5 +19,6 @@ export default defineConfig([
   },
   tseslint.configs.recommended,
   pluginReact.configs.flat["jsx-runtime"],
+  ...pluginQuery.configs["flat/recommended"],
   eslintConfigPrettier,
 ]);
