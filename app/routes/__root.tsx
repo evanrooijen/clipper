@@ -7,6 +7,8 @@ import {
   createRootRouteWithContext,
 } from "@tanstack/react-router";
 
+import { TanStackRouterDevtools } from "@tanstack/react-router-devtools";
+
 import appCss from "@/styles/app.css?url";
 import React from "react";
 import { QueryClient } from "@tanstack/react-query";
@@ -14,7 +16,7 @@ import { QueryClient } from "@tanstack/react-query";
 const ReactQueryDevtoolsProduction = React.lazy(() =>
   import("@tanstack/react-query-devtools/production").then((d) => ({
     default: d.ReactQueryDevtools,
-  }))
+  })),
 );
 
 export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
@@ -40,7 +42,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       ],
     }),
     component: RootComponent,
-  }
+  },
 );
 
 function RootComponent() {
@@ -61,6 +63,7 @@ function RootDocument({ children }: Readonly<{ children: ReactNode }>) {
         {children}
         <Scripts />
         <ReactQueryDevtoolsProduction position="bottom" />
+        <TanStackRouterDevtools position="bottom-left" />
       </body>
     </html>
   );

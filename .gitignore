@@ -2,3 +2,5 @@ node_modules
 
 .vinxi
 .output
+
+generated/prisma
