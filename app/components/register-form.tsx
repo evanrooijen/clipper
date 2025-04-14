@@ -1,15 +1,96 @@
-import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Link } from "@tanstack/react-router";
+import { useAppForm } from "@/hooks/form";
+import { authClient } from "@/lib/auth-client";
+import { cn } from "@/lib/utils";
+import { AnyFieldApi } from "@tanstack/react-form";
+import { Link, useRouter } from "@tanstack/react-router";
+import { useState } from "react";
+import { z } from "zod";
+
+function FieldInfo({ field }: { field: AnyFieldApi }) {
+  return (
+    <>
+      {field.state.meta.isTouched && field.state.meta.errors.length ? (
+        <em>{field.state.meta.errors.map((err) => err.message)[0]}</em>
+      ) : null}
+      {field.state.meta.isValidating ? "Validating..." : null}
+    </>
+  );
+}
+
+const registerSchema = z
+  .object({
+    email: z.string().email("Invalid email address"),
+    password: z
+      .string()
+      .min(8, "Password must be at least 8 characters long")
+      .regex(/[a-z]/, "Password must contain at least one lowercase letter")
+      .regex(/[A-Z]/, "Password must contain at least one uppercase letter")
+      .regex(/[0-9]/, "Password must contain at least one number")
+      .regex(
+        /[@$!%*?&]/,
+        "Password must contain at least one special character",
+      ),
+    confirmPassword: z.string(),
+  })
+  .refine((data) => data.password === data.confirmPassword, {
+    message: "Passwords don't match",
+    path: ["confirmPassword"],
+  });
 
 export function RegisterForm({
   className,
   ...props
 }: React.ComponentProps<"form">) {
+  const [signUpError, setSignUpError] = useState<string | null>(null);
+  const router = useRouter();
+
+  const form = useAppForm({
+    defaultValues: {
+      email: "",
+      password: "",
+      confirmPassword: "",
+    },
+    validators: {
+      onChange: registerSchema,
+    },
+    onSubmit: async ({ value }) => {
+      // Handle form submission
+      console.log("Form submitted:", value);
+      const { data, error } = await authClient.signUp.email({
+        name: value.email,
+        email: value.email,
+        password: value.password,
+      });
+
+      if (error && error.message) {
+        setSignUpError(error.message);
+        return;
+      }
+      // Redirect to the login page or show a success message
+      if (data && data.token === null) {
+        setSignUpError("Email already exists");
+        return;
+      }
+
+      router.navigate({
+        to: "/",
+      });
+    },
+  });
+
   return (
-    <form className={cn("flex flex-col gap-6", className)} {...props}>
+    <form
+      onSubmit={(e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        form.handleSubmit();
+      }}
+      className={cn("flex flex-col gap-6", className)}
+      {...props}
+    >
       <div className="flex flex-col items-center gap-2 text-center">
         <h1 className="text-2xl font-bold">Register your account</h1>
         <p className="text-muted-foreground text-sm text-balance">
@@ -17,21 +98,73 @@ export function RegisterForm({
         </p>
       </div>
       <div className="grid gap-6">
-        <div className="grid gap-3">
-          <Label htmlFor="email">Email</Label>
-          <Input id="email" type="email" placeholder="m@example.com" required />
-        </div>
-        <div className="grid gap-3">
-          <Label htmlFor="password">Password</Label>
-          <Input id="password" type="password" required />
-        </div>
-        <div className="grid gap-3">
-          <Label htmlFor="confirm-password">Confirm Password</Label>
-          <Input id="confirm-password" type="password" required />
-        </div>
-        <Button type="submit" className="w-full">
-          Register
-        </Button>
+        <form.AppField
+          name="email"
+          children={(field) => (
+            <div className="grid gap-3">
+              <Label htmlFor={field.name}>Email</Label>
+              <Input
+                id={field.name}
+                type="email"
+                onChange={(e) => field.handleChange(e.target.value)}
+                value={field.state.value}
+                autoComplete="email username"
+                placeholder="m@example.com"
+                required
+              />
+              <FieldInfo field={field} />
+            </div>
+          )}
+        />
+        <form.AppField
+          name="password"
+          children={(field) => (
+            <div className="grid gap-3">
+              <Label htmlFor={field.name}>Password</Label>
+              <Input
+                id={field.name}
+                name={field.name}
+                type="password"
+                autoComplete="new-password"
+                required
+                value={field.state.value}
+                onChange={(e) => field.handleChange(e.target.value)}
+              />
+              <FieldInfo field={field} />
+            </div>
+          )}
+        />
+        <form.AppField
+          name="confirmPassword"
+          children={(field) => (
+            <div className="grid gap-3">
+              <Label htmlFor={field.name}>Confirm Password</Label>
+              <Input
+                id={field.name}
+                name={field.name}
+                type="password"
+                autoComplete="new-password"
+                required
+                value={field.state.value}
+                onChange={(e) => field.handleChange(e.target.value)}
+              />
+              <FieldInfo field={field} />
+            </div>
+          )}
+        />
+        <form.Subscribe
+          selector={(state) => [state.canSubmit, state.isSubmitting]}
+          children={([canSubmit, isSubmitting]) => (
+            <Button
+              type="submit"
+              disabled={!canSubmit || isSubmitting}
+              variant="default"
+              className="w-full"
+            >
+              Register
+            </Button>
+          )}
+        />
         <div className="after:border-border relative text-center text-sm after:absolute after:inset-0 after:top-1/2 after:z-0 after:flex after:items-center after:border-t">
           <span className="bg-background text-muted-foreground relative z-10 px-2">
             Or continue with
@@ -53,6 +186,9 @@ export function RegisterForm({
           Log in
         </Link>
       </div>
+      {signUpError && (
+        <div className="text-center text-red-500">{signUpError}</div>
+      )}
     </form>
   );
 }
