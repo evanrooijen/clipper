@@ -6,8 +6,6 @@ export const Route = createFileRoute("/")({
   component: RouteComponent,
   loader: async () => {
     const headers = await getHeaders();
-    console.log(headers);
-
     // Your loader logic here
     const session = await auth.api.getSession({
       // @ts-expect-error - headers are not typed yet
