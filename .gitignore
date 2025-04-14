@@ -4,4 +4,4 @@ node_modules
 .vinxi
 .output
 
-generated/prisma
+app/generated/prisma

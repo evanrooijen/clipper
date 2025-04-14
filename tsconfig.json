@@ -8,7 +8,6 @@
     "strictNullChecks": true,
     "baseUrl": ".",
     "paths": {
-      "@prisma": ["./generated/prisma"],
       "@/*": ["./app/*"]
     }
   }
