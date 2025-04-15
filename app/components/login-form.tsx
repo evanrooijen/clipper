@@ -1,15 +1,65 @@
-import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { useAppForm } from "@/hooks/form";
+import { authClient } from "@/lib/auth-client";
+import { cn } from "@/lib/utils";
 import { Link } from "@tanstack/react-router";
+import { useState } from "react";
+import z from "zod";
+import FieldInfo from "@/components/form/field-info";
+
+const loginSchema = z.object({
+  email: z.string().email("Invalid email address"),
+  password: z.string(),
+});
 
 export function LoginForm({
   className,
   ...props
 }: React.ComponentProps<"form">) {
+  const [signInError, setSignInError] = useState<string | null>(null);
+
+  const form = useAppForm({
+    defaultValues: {
+      email: "",
+      password: "",
+    },
+    validators: {
+      onChange: loginSchema,
+    },
+    onSubmit: async ({ value }) => {
+      // Handle form submission
+      console.log("Form submitted:", value);
+      // Add your login logic here
+      const { email, password } = value;
+      const result = await authClient.signIn.email({
+        email,
+        password,
+        callbackURL: "/",
+      });
+      if (result.error && !result.error.message) {
+        setSignInError("Error logging in. Please try again.");
+        return;
+      }
+
+      if (result.error && result.error.message) {
+        setSignInError(result.error.message);
+        return;
+      }
+    },
+  });
+
   return (
-    <form className={cn("flex flex-col gap-6", className)} {...props}>
+    <form
+      onSubmit={(e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        form.handleSubmit();
+      }}
+      className={cn("flex flex-col gap-6", className)}
+      {...props}
+    >
       <div className="flex flex-col items-center gap-2 text-center">
         <h1 className="text-2xl font-bold">Login to your account</h1>
         <p className="text-muted-foreground text-sm text-balance">
@@ -17,22 +67,42 @@ export function LoginForm({
         </p>
       </div>
       <div className="grid gap-6">
-        <div className="grid gap-3">
-          <Label htmlFor="email">Email</Label>
-          <Input id="email" type="email" placeholder="m@example.com" required />
-        </div>
-        <div className="grid gap-3">
-          <div className="flex items-center">
-            <Label htmlFor="password">Password</Label>
-            <a
-              href="#"
-              className="ml-auto text-sm underline-offset-4 hover:underline"
-            >
-              Forgot your password?
-            </a>
-          </div>
-          <Input id="password" type="password" required />
-        </div>
+        <form.AppField
+          name="email"
+          children={(field) => (
+            <div className="grid gap-3">
+              <Label htmlFor={field.name}>Email</Label>
+              <Input
+                id={field.name}
+                type="email"
+                onChange={(e) => field.handleChange(e.target.value)}
+                value={field.state.value}
+                autoComplete="username email"
+                placeholder="m@example.com"
+                required
+              />
+              <FieldInfo field={field} />
+            </div>
+          )}
+        />
+        <form.AppField
+          name="password"
+          children={(field) => (
+            <div className="grid gap-3">
+              <Label htmlFor={field.name}>Password</Label>
+              <Input
+                id={field.name}
+                name={field.name}
+                type="password"
+                autoComplete="current-password"
+                required
+                value={field.state.value}
+                onChange={(e) => field.handleChange(e.target.value)}
+              />
+              <FieldInfo field={field} />
+            </div>
+          )}
+        />
         <Button type="submit" className="w-full">
           Login
         </Button>
@@ -57,6 +127,11 @@ export function LoginForm({
           Sign up
         </Link>
       </div>
+      {signInError && (
+        <div className="text-destructive-foreground text-center">
+          {signInError}
+        </div>
+      )}
     </form>
   );
 }

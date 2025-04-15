@@ -38,6 +38,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
         {
           rel: "stylesheet",
           href: appCss,
+          suppressHydrationWarning: true,
         },
         {
           rel: "stylesheet",

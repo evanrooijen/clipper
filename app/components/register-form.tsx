@@ -4,21 +4,10 @@ import { Label } from "@/components/ui/label";
 import { useAppForm } from "@/hooks/form";
 import { authClient } from "@/lib/auth-client";
 import { cn } from "@/lib/utils";
-import { AnyFieldApi } from "@tanstack/react-form";
-import { Link, useRouter } from "@tanstack/react-router";
+import { Link } from "@tanstack/react-router";
 import { useState } from "react";
 import { z } from "zod";
-
-function FieldInfo({ field }: { field: AnyFieldApi }) {
-  return (
-    <>
-      {field.state.meta.isTouched && field.state.meta.errors.length ? (
-        <em>{field.state.meta.errors.map((err) => err.message)[0]}</em>
-      ) : null}
-      {field.state.meta.isValidating ? "Validating..." : null}
-    </>
-  );
-}
+import FieldInfo from "@/components/form/field-info";
 
 const registerSchema = z
   .object({
@@ -45,7 +34,6 @@ export function RegisterForm({
   ...props
 }: React.ComponentProps<"form">) {
   const [signUpError, setSignUpError] = useState<string | null>(null);
-  const router = useRouter();
 
   const form = useAppForm({
     defaultValues: {
@@ -63,6 +51,7 @@ export function RegisterForm({
         name: value.email,
         email: value.email,
         password: value.password,
+        callbackURL: "/",
       });
 
       if (error && error.message) {
@@ -74,10 +63,6 @@ export function RegisterForm({
         setSignUpError("Email already exists");
         return;
       }
-
-      router.navigate({
-        to: "/",
-      });
     },
   });
 
@@ -187,7 +172,9 @@ export function RegisterForm({
         </Link>
       </div>
       {signUpError && (
-        <div className="text-center text-red-500">{signUpError}</div>
+        <div className="text-destructive-foreground text-center">
+          {signUpError}
+        </div>
       )}
     </form>
   );
