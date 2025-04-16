@@ -96,7 +96,6 @@ export function RegisterForm({
                 value={field.state.value}
                 autoComplete="email username"
                 placeholder="m@example.com"
-                required
               />
               <FieldInfo field={field} />
             </div>
@@ -112,7 +111,6 @@ export function RegisterForm({
                 name={field.name}
                 type="password"
                 autoComplete="new-password"
-                required
                 value={field.state.value}
                 onChange={(e) => field.handleChange(e.target.value)}
               />
@@ -130,7 +128,6 @@ export function RegisterForm({
                 name={field.name}
                 type="password"
                 autoComplete="new-password"
-                required
                 value={field.state.value}
                 onChange={(e) => field.handleChange(e.target.value)}
               />

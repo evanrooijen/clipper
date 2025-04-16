@@ -82,7 +82,6 @@ export function LoginForm({
                 value={field.state.value}
                 autoComplete="username email"
                 placeholder="m@example.com"
-                required
               />
               <FieldInfo field={field} />
             </div>
@@ -98,7 +97,6 @@ export function LoginForm({
                 name={field.name}
                 type="password"
                 autoComplete="current-password"
-                required
                 value={field.state.value}
                 onChange={(e) => field.handleChange(e.target.value)}
               />
