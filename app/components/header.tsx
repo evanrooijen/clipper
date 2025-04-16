@@ -12,7 +12,14 @@ const HeaderMenu = ({
   className?: string;
 }) => {
   return (
-    <header className={cn(className, "flex items-center justify-end gap-4")}>
+    <div className={cn(className, "flex items-center justify-between gap-4")}>
+      <Link to="/">
+        <img
+          className="size-12 dark:invert"
+          src="/assets/ship.svg"
+          alt="Clipper Logo"
+        />
+      </Link>
       {user ? (
         <UserMenu user={user} />
       ) : (
@@ -28,7 +35,7 @@ const HeaderMenu = ({
           </Link>
         </>
       )}
-    </header>
+    </div>
   );
 };
 export default HeaderMenu;
