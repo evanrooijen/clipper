@@ -13,6 +13,7 @@
   src: url("/fonts/Argone.otf") format("opentype");
   font-weight: normal;
   font-style: normal;
+  font-display: swap;
 }
 
 @font-face {
@@ -20,12 +21,14 @@
   src: url("/fonts/Argone-Bold.otf") format("opentype");
   font-weight: bold;
   font-style: normal;
+  font-display: swap;
 }
 
 @font-face {
   font-family: "RatherLoad";
   src: url("/fonts/RatherLoad.otf") format("opentype");
   font-weight: normal;
+  font-style: normal;
 }
 
 @utility container {
