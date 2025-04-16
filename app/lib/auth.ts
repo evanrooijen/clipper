@@ -6,6 +6,12 @@ import { reactStartCookies } from "better-auth/react-start";
 const prisma = new PrismaClient();
 
 export const auth = betterAuth({
+  session: {
+    cookieCache: {
+      enabled: true,
+      maxAge: 5 * 60, // 5 minutes
+    },
+  },
   emailAndPassword: {
     enabled: true,
   },

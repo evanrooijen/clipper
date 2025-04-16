@@ -6,7 +6,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import UserAvatar from "@/components/user-avatar";
-import { useRouter } from "@tanstack/react-router";
+import { Link, useRouter } from "@tanstack/react-router";
 import { authClient } from "@/lib/auth-client";
 
 const UserMenu = ({ user }: { user: User }) => {
@@ -22,6 +22,7 @@ const UserMenu = ({ user }: { user: User }) => {
         },
       },
     });
+    await router.invalidate();
   };
 
   return (
@@ -30,7 +31,9 @@ const UserMenu = ({ user }: { user: User }) => {
         <UserAvatar user={user} />
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="w-56">
-        <DropdownMenuItem>Profile</DropdownMenuItem>
+        <DropdownMenuItem asChild>
+          <Link to="/profile">Profile</Link>
+        </DropdownMenuItem>
         <DropdownMenuItem>Settings</DropdownMenuItem>
         <DropdownMenuItem onClick={handleLogout}>Logout</DropdownMenuItem>
       </DropdownMenuContent>

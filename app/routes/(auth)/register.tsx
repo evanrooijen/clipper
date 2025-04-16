@@ -2,7 +2,7 @@ import { RegisterForm } from "@/components/register-form";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { GalleryVerticalEnd } from "lucide-react";
 
-export const Route = createFileRoute("/register")({
+export const Route = createFileRoute("/(auth)/register")({
   component: RouteComponent,
 });
 

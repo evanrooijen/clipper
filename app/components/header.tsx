@@ -8,7 +8,7 @@ const HeaderMenu = ({
   user,
   className,
 }: {
-  user: User | undefined;
+  user: User | null;
   className?: string;
 }) => {
   return (

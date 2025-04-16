@@ -44,6 +44,9 @@ export function LoginForm({
         setSignInError(result.error.message);
         return;
       }
+
+      console.log("Login successful", result);
+      setSignInError(null);
     },
   });
 
