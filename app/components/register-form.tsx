@@ -45,8 +45,6 @@ export function RegisterForm({
       onChange: registerSchema,
     },
     onSubmit: async ({ value }) => {
-      // Handle form submission
-      console.log("Form submitted:", value);
       const { data, error } = await authClient.signUp.email({
         name: value.email,
         email: value.email,
@@ -81,6 +79,9 @@ export function RegisterForm({
         <p className="text-muted-foreground text-sm text-balance">
           Enter your details below to create an account
         </p>
+        {signUpError && (
+          <div className="text-destructive text-center">{signUpError}</div>
+        )}
       </div>
       <div className="grid gap-6">
         <form.AppField
@@ -171,11 +172,6 @@ export function RegisterForm({
           Log in
         </Link>
       </div>
-      {signUpError && (
-        <div className="text-destructive-foreground text-center">
-          {signUpError}
-        </div>
-      )}
     </form>
   );
 }

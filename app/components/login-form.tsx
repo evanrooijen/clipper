@@ -29,9 +29,6 @@ export function LoginForm({
       onChange: loginSchema,
     },
     onSubmit: async ({ value }) => {
-      // Handle form submission
-      console.log("Form submitted:", value);
-      // Add your login logic here
       const { email, password } = value;
       const result = await authClient.signIn.email({
         email,
@@ -65,6 +62,9 @@ export function LoginForm({
         <p className="text-muted-foreground text-sm text-balance">
           Enter your email below to login to your account
         </p>
+        {signInError && (
+          <div className="text-destructive text-center">{signInError}</div>
+        )}
       </div>
       <div className="grid gap-6">
         <form.AppField
@@ -136,11 +136,6 @@ export function LoginForm({
           Sign up
         </Link>
       </div>
-      {signInError && (
-        <div className="text-destructive-foreground text-center">
-          {signInError}
-        </div>
-      )}
     </form>
   );
 }
