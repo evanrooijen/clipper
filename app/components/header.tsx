@@ -23,7 +23,7 @@ const HeaderMenu = ({
       {user ? (
         <UserMenu user={user} />
       ) : (
-        <>
+        <div className="flex items-center gap-4">
           <Link className={buttonVariants()} to="/login">
             Login
           </Link>
@@ -33,7 +33,7 @@ const HeaderMenu = ({
           >
             Sign Up
           </Link>
-        </>
+        </div>
       )}
     </div>
   );
