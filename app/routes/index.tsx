@@ -1,28 +1,20 @@
 import HeaderMenu from "@/components/header";
 import { auth } from "@/lib/auth";
 import { createFileRoute } from "@tanstack/react-router";
-import { createServerFn } from "@tanstack/react-start";
-import { getHeaders } from "@tanstack/react-start/server";
-
-const getServerHeaders = createServerFn().handler(async () => {
-  return getHeaders();
-});
+import { getWebRequest } from "@tanstack/react-start/server";
 
 export const Route = createFileRoute("/")({
   component: RouteComponent,
   loader: async () => {
-    const headers = await getServerHeaders();
-    const nodeHeaders = new Headers();
+    const req = await getWebRequest();
 
-    Object.entries(headers).forEach(([key, value]) => {
-      if (value) {
-        nodeHeaders.append(key, value);
-      }
-    });
+    if (!req) {
+      throw new Error("No request found");
+    }
 
     // Your loader logic here
     const session = await auth.api.getSession({
-      headers: nodeHeaders,
+      headers: req?.headers,
     });
     return {
       user: session?.user,
