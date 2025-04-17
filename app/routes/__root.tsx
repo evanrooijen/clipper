@@ -48,7 +48,6 @@ export const Route = createRootRouteWithContext<{
       {
         rel: "stylesheet",
         href: appCss,
-        suppressHydrationWarning: true,
       },
     ],
   }),
@@ -65,7 +64,7 @@ function RootComponent() {
 
 function RootDocument({ children }: Readonly<{ children: ReactNode }>) {
   return (
-    <html>
+    <html suppressHydrationWarning lang="en">
       <head>
         <HeadContent />
       </head>
