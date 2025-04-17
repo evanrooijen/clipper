@@ -1,26 +1,26 @@
-import { RegisterForm } from "@/components/register-form";
-import { createFileRoute, Link } from "@tanstack/react-router";
-import { GalleryVerticalEnd } from "lucide-react";
+import { createFileRoute, Link, Outlet } from "@tanstack/react-router";
 
-export const Route = createFileRoute("/(auth)/register")({
+export const Route = createFileRoute("/(auth)/_auth")({
   component: RouteComponent,
 });
 
-function RegisterPage() {
+function RouteComponent() {
   return (
     <div className="grid min-h-svh lg:grid-cols-2">
       <div className="flex flex-col gap-4 p-6 md:p-10">
         <div className="flex justify-center gap-2 md:justify-start">
-          <Link to="/" className="flex items-center gap-2 font-medium">
-            <div className="bg-primary text-primary-foreground flex h-6 w-6 items-center justify-center rounded-md">
-              <GalleryVerticalEnd className="size-4" />
-            </div>
-            Acme Inc.
+          <Link to="/" className="flex items-center gap-2">
+            <img
+              src="/assets/ship.svg"
+              alt="Logo"
+              className="size-12 align-middle dark:invert"
+            />
+            <span className="text-2xl font-bold">Clipper</span>
           </Link>
         </div>
         <div className="flex flex-1 items-center justify-center">
           <div className="w-full max-w-xs">
-            <RegisterForm />
+            <Outlet />
           </div>
         </div>
       </div>
@@ -33,8 +33,4 @@ function RegisterPage() {
       </div>
     </div>
   );
-}
-
-function RouteComponent() {
-  return <RegisterPage />;
 }
