@@ -3,6 +3,7 @@ import { Link } from "@tanstack/react-router";
 import { User } from "better-auth";
 import { buttonVariants } from "@/components/ui/button";
 import UserMenu from "@/components/user-menu";
+import MainNavigation from "./nav/main-navigation";
 
 const HeaderMenu = ({
   user,
@@ -21,7 +22,10 @@ const HeaderMenu = ({
         />
       </Link>
       {user ? (
-        <UserMenu user={user} />
+        <>
+          <MainNavigation />
+          <UserMenu user={user} />
+        </>
       ) : (
         <div className="flex items-center gap-4">
           <Link className={buttonVariants()} to="/login">

@@ -15,6 +15,7 @@ import { createFileRoute } from '@tanstack/react-router'
 import { Route as rootRoute } from './routes/__root'
 import { Route as publicIndexImport } from './routes/(public)/index'
 import { Route as authenticatedProfileImport } from './routes/(authenticated)/profile'
+import { Route as authenticatedFriendsImport } from './routes/(authenticated)/friends'
 import { Route as authAuthImport } from './routes/(auth)/_auth'
 import { Route as authAuthRegisterImport } from './routes/(auth)/_auth.register'
 import { Route as authAuthLoginImport } from './routes/(auth)/_auth.login'
@@ -39,6 +40,12 @@ const publicIndexRoute = publicIndexImport.update({
 const authenticatedProfileRoute = authenticatedProfileImport.update({
   id: '/(authenticated)/profile',
   path: '/profile',
+  getParentRoute: () => rootRoute,
+} as any)
+
+const authenticatedFriendsRoute = authenticatedFriendsImport.update({
+  id: '/(authenticated)/friends',
+  path: '/friends',
   getParentRoute: () => rootRoute,
 } as any)
 
@@ -76,6 +83,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/'
       preLoaderRoute: typeof authAuthImport
       parentRoute: typeof authRoute
+    }
+    '/(authenticated)/friends': {
+      id: '/(authenticated)/friends'
+      path: '/friends'
+      fullPath: '/friends'
+      preLoaderRoute: typeof authenticatedFriendsImport
+      parentRoute: typeof rootRoute
     }
     '/(authenticated)/profile': {
       id: '/(authenticated)/profile'
@@ -136,6 +150,7 @@ const authRouteWithChildren = authRoute._addFileChildren(authRouteChildren)
 
 export interface FileRoutesByFullPath {
   '/': typeof publicIndexRoute
+  '/friends': typeof authenticatedFriendsRoute
   '/profile': typeof authenticatedProfileRoute
   '/login': typeof authAuthLoginRoute
   '/register': typeof authAuthRegisterRoute
@@ -143,6 +158,7 @@ export interface FileRoutesByFullPath {
 
 export interface FileRoutesByTo {
   '/': typeof publicIndexRoute
+  '/friends': typeof authenticatedFriendsRoute
   '/profile': typeof authenticatedProfileRoute
   '/login': typeof authAuthLoginRoute
   '/register': typeof authAuthRegisterRoute
@@ -152,6 +168,7 @@ export interface FileRoutesById {
   __root__: typeof rootRoute
   '/(auth)': typeof authRouteWithChildren
   '/(auth)/_auth': typeof authAuthRouteWithChildren
+  '/(authenticated)/friends': typeof authenticatedFriendsRoute
   '/(authenticated)/profile': typeof authenticatedProfileRoute
   '/(public)/': typeof publicIndexRoute
   '/(auth)/_auth/login': typeof authAuthLoginRoute
@@ -160,13 +177,14 @@ export interface FileRoutesById {
 
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/profile' | '/login' | '/register'
+  fullPaths: '/' | '/friends' | '/profile' | '/login' | '/register'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/profile' | '/login' | '/register'
+  to: '/' | '/friends' | '/profile' | '/login' | '/register'
   id:
     | '__root__'
     | '/(auth)'
     | '/(auth)/_auth'
+    | '/(authenticated)/friends'
     | '/(authenticated)/profile'
     | '/(public)/'
     | '/(auth)/_auth/login'
@@ -176,12 +194,14 @@ export interface FileRouteTypes {
 
 export interface RootRouteChildren {
   authRoute: typeof authRouteWithChildren
+  authenticatedFriendsRoute: typeof authenticatedFriendsRoute
   authenticatedProfileRoute: typeof authenticatedProfileRoute
   publicIndexRoute: typeof publicIndexRoute
 }
 
 const rootRouteChildren: RootRouteChildren = {
   authRoute: authRouteWithChildren,
+  authenticatedFriendsRoute: authenticatedFriendsRoute,
   authenticatedProfileRoute: authenticatedProfileRoute,
   publicIndexRoute: publicIndexRoute,
 }
@@ -197,6 +217,7 @@ export const routeTree = rootRoute
       "filePath": "__root.tsx",
       "children": [
         "/(auth)",
+        "/(authenticated)/friends",
         "/(authenticated)/profile",
         "/(public)/"
       ]
@@ -214,6 +235,9 @@ export const routeTree = rootRoute
         "/(auth)/_auth/login",
         "/(auth)/_auth/register"
       ]
+    },
+    "/(authenticated)/friends": {
+      "filePath": "(authenticated)/friends.tsx"
     },
     "/(authenticated)/profile": {
       "filePath": "(authenticated)/profile.tsx"
