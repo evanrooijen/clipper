@@ -21,6 +21,8 @@ model User {
   updatedAt     DateTime
   sessions      Session[]
   accounts      Account[]
+  followedBy    Follows[] @relation("followedBy")
+  following     Follows[] @relation("following")
 
   @@unique([email])
   @@map("user")
@@ -69,4 +71,13 @@ model Verification {
   updatedAt  DateTime?
 
   @@map("verification")
+}
+
+model Follows {
+  followedBy   User   @relation("followedBy", fields: [followedById], references: [id])
+  followedById String
+  following    User   @relation("following", fields: [followingId], references: [id])
+  followingId  String
+
+  @@id([followingId, followedById])
 }
