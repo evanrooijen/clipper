@@ -5,6 +5,8 @@ import { createFileRoute, redirect } from "@tanstack/react-router";
 import { User } from "better-auth";
 import { Suspense } from "react";
 
+import UserList from "@/features/follows/components/user-list";
+
 const getUserFollowersQuery = (userId: string) =>
   queryOptions({
     queryKey: ["followers", userId],
@@ -47,9 +49,9 @@ function RouteComponent() {
   return (
     <BaseLayout user={user}>
       <div className="p-4">
-        <h1 className="text-2xl font-bold">Friends</h1>
+        <h1 className="font-display text-5xl">Friends</h1>
         <p className="mt-4">Welcome, {user.name}!</p>
-        <div className="grid grid-cols-2">
+        <div className="mt-8 grid grid-cols-2 gap-4">
           <Suspense fallback="Loading...">
             <Followers user={user} />
           </Suspense>
@@ -62,30 +64,30 @@ function RouteComponent() {
   );
 }
 function Followers({ user }: { user: { id: string; name: string } }) {
-  const { data: followers } = useSuspenseQuery(getUserFollowersQuery(user.id));
+  const { data } = useSuspenseQuery(getUserFollowersQuery(user.id));
 
   return (
-    <div>
-      <h2 className="text-xl font-bold">Followers</h2>
-      <ul>
-        {followers.map((follower) => (
-          <li key={follower.followingId}>{follower.following.name}</li>
-        ))}
-      </ul>
+    <div className="flex flex-col gap-2">
+      <h2 className="font-display text-3xl">Followers</h2>
+      <UserList
+        isFollowing={false}
+        onFollow={() => {}}
+        users={data.map((user) => user.following)}
+      />
     </div>
   );
 }
 function Following({ user }: { user: User }) {
-  const { data: following } = useSuspenseQuery(getUserFollowingQuery(user.id));
+  const { data } = useSuspenseQuery(getUserFollowingQuery(user.id));
 
   return (
-    <div>
-      <h2 className="text-xl font-bold">Following</h2>
-      <ul>
-        {following.map((follow) => (
-          <li key={follow.followedById}>{follow.followedBy.name}</li>
-        ))}
-      </ul>
+    <div className="flex flex-col gap-2">
+      <h2 className="font-display text-3xl">Following</h2>
+      <UserList
+        isFollowing={true}
+        onUnfollow={() => {}}
+        users={data.map((user) => user.followedBy)}
+      />
     </div>
   );
 }

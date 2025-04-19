@@ -1,7 +1,7 @@
-import { User } from "better-auth";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { UserPersonalData } from "@/features/follows/functions";
 
-function UserAvatar({ user }: { user: User }) {
+function UserAvatar({ user }: { user: UserPersonalData }) {
   return (
     <Avatar>
       {user.image ? (
