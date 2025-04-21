@@ -13,6 +13,7 @@ import appCss from "@/styles/app.css?url";
 import React from "react";
 import { QueryClient } from "@tanstack/react-query";
 import { getUser } from "@/utils/auth";
+import { Toaster } from "@/components/ui/sonner";
 
 const ReactQueryDevtoolsProduction = React.lazy(() =>
   import("@tanstack/react-query-devtools/production").then((d) => ({
@@ -71,6 +72,7 @@ function RootDocument({ children }: Readonly<{ children: ReactNode }>) {
       <body className="dark">
         {children}
         <Scripts />
+        <Toaster />
         <ReactQueryDevtoolsProduction position="bottom" />
         <TanStackRouterDevtools position="bottom-left" />
       </body>
