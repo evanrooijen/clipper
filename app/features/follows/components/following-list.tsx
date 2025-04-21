@@ -4,6 +4,7 @@ import {
   useSuspenseQuery,
 } from "@tanstack/react-query";
 import { User } from "better-auth";
+import { toast } from "sonner";
 import { unFollowUser } from "../functions";
 import { getUserFollowingQuery } from "../queries";
 import UserList from "./user-list";
@@ -16,6 +17,7 @@ function Following({ user }: { user: User }) {
     mutationFn: unFollowUser,
     onSuccess: () => {
       queryClient.invalidateQueries(getUserFollowingQuery(user.id));
+      toast.success("Successfully unfollowed");
     },
   });
 

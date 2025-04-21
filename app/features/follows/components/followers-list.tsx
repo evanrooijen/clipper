@@ -3,11 +3,13 @@ import {
   useQueryClient,
   useSuspenseQuery,
 } from "@tanstack/react-query";
+import { User } from "better-auth";
+import { toast } from "sonner";
 import { followUser } from "../functions";
 import { getUserFollowersQuery, getUserFollowingQuery } from "../queries";
 import UserList from "./user-list";
 
-function Followers({ user }: { user: { id: string; name: string } }) {
+function Followers({ user }: { user: User }) {
   const { data } = useSuspenseQuery(getUserFollowersQuery(user.id));
   const queryClient = useQueryClient();
 
@@ -15,6 +17,7 @@ function Followers({ user }: { user: { id: string; name: string } }) {
     mutationFn: followUser,
     onSuccess: () => {
       queryClient.invalidateQueries(getUserFollowingQuery(user.id));
+      toast.success("Successfully followed");
     },
   });
 
