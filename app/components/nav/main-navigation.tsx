@@ -1,10 +1,9 @@
-import { Link, LinkProps } from "@tanstack/react-router";
+import { Link, LinkProps, useRouterState } from "@tanstack/react-router";
 import {
   NavigationMenu,
   NavigationMenuItem,
   NavigationMenuLink,
   NavigationMenuList,
-  navigationMenuTriggerStyle,
 } from "../ui/navigation-menu";
 
 const MainNavigationMenuItems = [
@@ -19,16 +18,19 @@ const MainNavigationMenuItems = [
 ] as const satisfies ReadonlyArray<LinkProps & { title: string }>;
 
 const MainNavigation = () => {
+  const location = useRouterState({
+    select: (state) => state.location.pathname,
+  });
+
   return (
     <NavigationMenu>
       <NavigationMenuList>
         {MainNavigationMenuItems.map((item, index) => (
           <NavigationMenuItem key={index}>
-            <NavigationMenuLink
-              asChild
-              className={navigationMenuTriggerStyle()}
-            >
-              <Link to={item.to}>{item.title}</Link>
+            <NavigationMenuLink asChild>
+              <Link data-active={location.startsWith(item.to)} to={item.to}>
+                {item.title}
+              </Link>
             </NavigationMenuLink>
           </NavigationMenuItem>
         ))}
