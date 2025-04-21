@@ -1,18 +1,10 @@
 import { prisma } from "@/lib/db";
+import { getCurrentUser } from "@/lib/headers";
 import { createServerFn } from "@tanstack/react-start";
-import { z } from "zod";
-import { Prisma } from "@prisma-app/client";
+import { FollowSchema, UnFollowSchema, UserIdSchema } from "./schema";
 
-const UserIdSchema = z.object({
-  id: z.string(),
-});
-
-type ThenArg<T> = T extends PromiseLike<infer U> ? U : T;
-
-export const getFollowers = createServerFn({ method: "GET" })
-  .validator((person: unknown) => {
-    return UserIdSchema.parse(person);
-  })
+const getFollowers = createServerFn({ method: "GET" })
+  .validator(UserIdSchema)
   .handler(async (context) => {
     return prisma.follows.findMany({
       where: {
@@ -31,10 +23,8 @@ export const getFollowers = createServerFn({ method: "GET" })
     });
   });
 
-export const getFollowing = createServerFn({ method: "GET" })
-  .validator((person: unknown) => {
-    return UserIdSchema.parse(person);
-  })
+const getFollowing = createServerFn({ method: "GET" })
+  .validator(UserIdSchema)
   .handler(async (context) => {
     return prisma.follows.findMany({
       where: {
@@ -53,11 +43,65 @@ export const getFollowing = createServerFn({ method: "GET" })
     });
   });
 
-export type FollowingWithUser = ThenArg<ReturnType<typeof getFollowers>>;
-export type FollowersWithUser = ThenArg<ReturnType<typeof getFollowing>>;
+const followUser = createServerFn()
+  .validator(FollowSchema)
+  .handler(async (context) => {
+    const currentUser = await getCurrentUser();
+    if (!currentUser) throw new Error("Not authenticated");
 
-type UserPersonalData = Prisma.UserGetPayload<{
-  select: { email: true; name: true; id: true; image: true };
-}>;
+    const followingId = currentUser.user.id;
+    const { userId } = context.data;
 
-export { type UserPersonalData };
+    const follow = await prisma.follows.findFirst({
+      where: {
+        followedById: userId,
+        followingId,
+      },
+    });
+
+    if (follow) {
+      throw new Error("Already following");
+    }
+
+    await prisma.follows.create({
+      data: {
+        followedById: userId,
+        followingId,
+      },
+    });
+
+    return true;
+  });
+
+const unFollowUser = createServerFn()
+  .validator(UnFollowSchema)
+  .handler(async (context) => {
+    const currentUser = await getCurrentUser();
+    if (!currentUser) throw new Error("Not authenticated");
+
+    const { userId } = context.data;
+    const followingId = currentUser.user.id;
+
+    const follow = await prisma.follows.findFirst({
+      where: {
+        followedById: userId,
+        followingId,
+      },
+    });
+
+    if (!follow) {
+      throw new Error("Follow not found");
+    }
+
+    await prisma.follows.delete({
+      where: {
+        followingId_followedById: {
+          followedById: follow.followedById,
+          followingId: follow.followingId,
+        },
+      },
+    });
+    return true;
+  });
+
+export { followUser, getFollowers, getFollowing, unFollowUser };

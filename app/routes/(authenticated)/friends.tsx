@@ -1,23 +1,13 @@
 import BaseLayout from "@/components/layout/base-layout";
-import { getFollowers, getFollowing } from "@/features/follows/functions";
-import { queryOptions, useSuspenseQuery } from "@tanstack/react-query";
 import { createFileRoute, redirect } from "@tanstack/react-router";
-import { User } from "better-auth";
 import { Suspense } from "react";
 
-import UserList from "@/features/follows/components/user-list";
-
-const getUserFollowersQuery = (userId: string) =>
-  queryOptions({
-    queryKey: ["followers", userId],
-    queryFn: () => getFollowers({ data: { id: userId } }),
-  });
-
-const getUserFollowingQuery = (userId: string) =>
-  queryOptions({
-    queryKey: ["following", userId],
-    queryFn: () => getFollowing({ data: { id: userId } }),
-  });
+import Followers from "@/features/follows/components/followers-list";
+import Following from "@/features/follows/components/following-list";
+import {
+  getUserFollowersQuery,
+  getUserFollowingQuery,
+} from "@/features/follows/queries";
 
 export const Route = createFileRoute("/(authenticated)/friends")({
   component: RouteComponent,
@@ -61,33 +51,5 @@ function RouteComponent() {
         </div>
       </div>
     </BaseLayout>
-  );
-}
-function Followers({ user }: { user: { id: string; name: string } }) {
-  const { data } = useSuspenseQuery(getUserFollowersQuery(user.id));
-
-  return (
-    <div className="flex flex-col gap-2">
-      <h2 className="font-display text-3xl">Followers</h2>
-      <UserList
-        isFollowing={false}
-        onFollow={() => {}}
-        users={data.map((user) => user.following)}
-      />
-    </div>
-  );
-}
-function Following({ user }: { user: User }) {
-  const { data } = useSuspenseQuery(getUserFollowingQuery(user.id));
-
-  return (
-    <div className="flex flex-col gap-2">
-      <h2 className="font-display text-3xl">Following</h2>
-      <UserList
-        isFollowing={true}
-        onUnfollow={() => {}}
-        users={data.map((user) => user.followedBy)}
-      />
-    </div>
   );
 }

@@ -1,5 +1,5 @@
 import UserAvatar from "@/components/user-avatar";
-import { UserPersonalData } from "../functions";
+import { UserPersonalData } from "../types";
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 
