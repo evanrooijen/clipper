@@ -1,5 +1,5 @@
 import { prisma } from "@/lib/db";
-import { getCurrentUser } from "@/lib/headers";
+import { getCurrentUser } from "@/lib/auth-utils";
 import { createServerFn } from "@tanstack/react-start";
 import { FollowSchema, UnFollowSchema, UserIdSchema } from "./schema";
 
